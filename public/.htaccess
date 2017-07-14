@@ -1,23 +1,20 @@
-# Necessary to prevent problems when using a controller named "index" and having a root index.php
-# more here: http://httpd.apache.org/docs/2.2/content-negotiation.html
+# 防止在使用一个名字为 "index" 的控制器时 Apache 会执行此目录下的 index.php。
 Options -MultiViews
 
-# Activates URL rewriting (like myproject.com/controller/action/1/2/3)
-RewriteEngine On
-
-# Prevent people from looking directly into folders
+# 阻止 Apache 将目录结构列出来。
 Options -Indexes
 
-# If the following conditions are true, then rewrite the URL:
-# If the requested filename is not a directory,
-RewriteCond %{REQUEST_FILENAME} !-d
-# and if the requested filename is not a regular file that exists,
+# 激活重写引擎，Apache 将处理以下任何规则：
+RewriteEngine On
+
+# 指定 RewriteCond 指令 检查所请求的字符串，如果被请求的文件名不存在，就执行下面的重写规则。
 RewriteCond %{REQUEST_FILENAME} !-f
-# and if the requested filename is not a symbolic link,
+
+# 指定 RewriteCond 指令 检查所请求的字符串，如果被请求的符号链接名不存在，就执行下面的重写规则。
 RewriteCond %{REQUEST_FILENAME} !-l
-# then rewrite the URL in the following way:
-# Take the whole request filename and provide it as the value of a
-# "url" query parameter to index.php. Append any query string from
-# the original URL as further query parameters (QSA), and stop
-# processing this .htaccess file (L).
+
+# 指定 RewriteCond 指令 检查所请求的字符串，如果被请求的目录名不存在，就执行下面的重写规则。
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# 指定 RewriteRule 指令 匹配所有字符串替换成 index.php?url=(.+) QSA标志表示追加请求字符串，L标志表示这是执行的最后一个运行规则。
 RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
